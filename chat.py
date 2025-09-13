@@ -16,7 +16,7 @@ def _get_session_history(session_id: str) -> InMemoryChatMessageHistory:
     return _store[session_id]
 
 
-def get_chat_response(prompt_text, session_id="user1"):
+def get_chat_response(prompt_text, session_id='user1'):
     """根据历史聊天记录做出回答"""
     # 初始化 LLM
     llm = ChatOpenAI(
@@ -26,9 +26,9 @@ def get_chat_response(prompt_text, session_id="user1"):
     )
 
     # PromptTemplate：把 history 插进 prompt（MessagesPlaceholder）
-    prompt = ChatPromptTemplate.from_messages([
-        MessagesPlaceholder(variable_name="history"),   # 自动占位：历史消息会被插入到这里
-        ("human", "{input}"),                           # 模板把用户输入放在这里
+    prompt = ChatPromptTemplate([
+        MessagesPlaceholder('history'),   # 自动占位：历史消息会被插入到这里
+        ('human', '{input}'),                           # 模板把用户输入放在这里
     ])
 
     # 把 prompt 和 llm 串起来
@@ -38,17 +38,24 @@ def get_chat_response(prompt_text, session_id="user1"):
     chat_chain = RunnableWithMessageHistory(
         chain,
         _get_session_history,
-        input_messages_key="input",        # prompt 的 key
-        history_messages_key="history",    # 历史的 key
+        input_messages_key='input',        # prompt 的 key
+        history_messages_key='history',    # 历史的 key
     )
 
     # 获取一次对话的响应：必须在 config 里提供 session_id
-    response = chat_chain.invoke(
-        {"input": prompt_text},
-        config={"configurable": {"session_id": session_id}},
-    )
-    return response.content
+    # response = chat_chain.invoke(
+    #     {'input': prompt_text},
+    #     config={'configurable': {'session_id': session_id}},
+    # )
+    # return response.content
 
+    # 流式输出
+    for chunk in chat_chain.stream(
+        {'input': prompt_text},
+        config={'configurable': {'session_id': session_id}}
+    ):
+        if chunk.content:   # 有内容才输出
+            yield chunk.content
 
 # # 示例对话
 # print('111:', get_chat_response('我是Tom。你是谁?(回答20字以内)'))
