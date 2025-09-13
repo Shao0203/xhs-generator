@@ -1,5 +1,5 @@
 import streamlit as st
-from chat import get_chat_response
+from chat import get_chat_response_stream
 
 
 left_column, right_column = st.columns([4, 1])
@@ -29,7 +29,7 @@ if prompt_text:
     # 流式输出
     with st.chat_message('ai'):
         response = st.write_stream(
-            get_chat_response(prompt_text, st.session_state.session_id)
+            get_chat_response_stream(prompt_text, st.session_state.session_id)
         )
     # 最终完整的内容保存下来（流式时 response 是拼接后的最终字符串）
     st.session_state.messages.append({'role': 'ai', 'content': response})
@@ -40,4 +40,4 @@ if prompt_text:
     # st.chat_message('ai').write(response)
 
 
-print('#####', st.session_state)
+# print('#####', st.session_state)

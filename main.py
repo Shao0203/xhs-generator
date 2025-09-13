@@ -3,7 +3,7 @@ from utils import gen_xhs
 
 st.header('小红书AI创作助手')
 with st.sidebar:
-    api_key = st.text_input('输入OpenAI API密钥')
+    api_key = st.text_input('输入OpenAI API密钥', type='password')
     st.markdown('[获取OpenAI密钥](https://platform.openai.com/account/api-keys)')
 
 theme = st.text_input('主题')

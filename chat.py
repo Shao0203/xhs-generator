@@ -16,7 +16,7 @@ def _get_session_history(session_id: str) -> InMemoryChatMessageHistory:
     return _store[session_id]
 
 
-def get_chat_response(prompt_text, session_id='user1'):
+def get_chat_response_stream(prompt_text, session_id='user1'):
     """根据历史聊天记录做出回答"""
     # 初始化 LLM
     llm = ChatOpenAI(
